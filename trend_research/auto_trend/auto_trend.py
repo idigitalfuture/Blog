@@ -1,10 +1,13 @@
+# Google trend exploration automation
+# Timothy Price @ blog.idigitalfuture.com
+# July 2020
+
 from pytrends.request import TrendReq
 import pandas as pd
 
-pytrends = TrendReq(hl='en-US', tz=570)
-# todo: investigate correct timezone
-
 THRESHOLD = 350
+
+pytrends = TrendReq(hl='en-US', tz=570)
 
 init_keyword = ["Blockchain"]
 
@@ -17,10 +20,11 @@ def add_to_list(keywords, count, threshold, counter=0):
 
     for keyword in keywords:
         print(keyword)
+
         # create list of related terms and add to top-parent DataFrame
         pytrends.build_payload([keyword], cat=0, timeframe='today 3-m', geo='US', gprop='')
         init_queries = pytrends.related_queries()[keyword]['rising']
-        # print("init_queries: {}".format(init_queries))
+
         if init_queries is not None:
             init_queries_top = init_queries[init_queries.value > threshold]
             print("init_queries top: {}".format(init_queries_top))
