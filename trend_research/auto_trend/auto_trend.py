@@ -1,18 +1,15 @@
 # Google trend exploration automation
 # Timothy Price @ blog.idigitalfuture.com
+# github.com/idigitalfuture/Blog/blob/master/trend_research/auto_trend/
 # July 2020
 
 from pytrends.request import TrendReq
 import pandas as pd
 
-THRESHOLD = 350
-
 pytrends = TrendReq(hl='en-US', tz=570)
 
-init_keyword = ["Blockchain"]
-
 # recursive function to add all related keywords and associated trends to dataframe
-def add_to_list(keywords, count, threshold, counter=0):
+def add_to_list(keywords, depth, threshold, counter=0):
 
     print('depth: {}'.format(counter))
     # initialize DataFrame
@@ -30,8 +27,8 @@ def add_to_list(keywords, count, threshold, counter=0):
             print("init_queries top: {}".format(init_queries_top))
             trend_terms = trend_terms.append(init_queries_top,  ignore_index=True)
 
-            if counter < count and init_queries_top is not None:
+            if counter < depth and init_queries_top is not None:
                 # find terms related to all items in list
-                trend_terms = trend_terms.append(add_to_list(init_queries_top['query'].tolist(), count, threshold, counter+1), ignore_index=True)
+                trend_terms = trend_terms.append(add_to_list(init_queries_top['query'].tolist(), depth, threshold, counter+1), ignore_index=True)
 
-    return trend_terms.drop_duplicates(subset='query', keep='first')
+    return trend_terms.drop_duplicates(subset='query', keep='first').sort_values(by=['value'], ascending=False)
